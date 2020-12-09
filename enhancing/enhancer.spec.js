@@ -14,7 +14,7 @@ describe('enhancer.js', () => {
 			expect(result).not.toBe(item);
 		});
 
-		test('repair() returns new item with 100 dur', () => {
+		test('repair() returns new item with 100 DUR', () => {
 			const item = {
 				name: 'foo',
 				enhancement: 15,
@@ -25,7 +25,7 @@ describe('enhancer.js', () => {
 			expect(result.durability).toBe(100);
 		});
 
-		test('repair() will only change durability stat', () => {
+		test('repair() will only change DUR stat', () => {
 			const item = {
 				name: 'foo',
 				enhancement: 15,
@@ -36,52 +36,98 @@ describe('enhancer.js', () => {
 			expect(result.name).toBe('foo');
 			expect(result.enhancement).toBe(15);
 		});
-    });
-    
-    describe('success()', () => {
-        test('success() returns new object', () => {
+	});
+
+	describe('success()', () => {
+		test('success() returns new object', () => {
+			const item = {
+				name: 'foo',
+				enhancement: 15,
+				durability: 50,
+			};
+			const result = enhancer.success(item);
+
+			expect(result).not.toBe(item);
+		});
+
+		test('success() returns obj with ENH +1', () => {
+			const item = {
+				name: 'foo',
+				enhancement: 15,
+				durability: 50,
+			};
+			const result = enhancer.success(item);
+
+			expect(result.enhancement).toBe(16);
+		});
+
+		test('success() ENH does not exceed 20', () => {
+			const item = {
+				name: 'foo',
+				enhancement: 20,
+				durability: 50,
+			};
+			const result = enhancer.success(item);
+
+			expect(result.enhancement).toBe(20);
+		});
+
+		test('success() only modifies ENH stat', () => {
+			const item = {
+				name: 'foo',
+				enhancement: 15,
+				durability: 50,
+			};
+			const result = enhancer.success(item);
+
+			expect(result.name).toBe('foo');
+			expect(result.durability).toBe(50);
+		});
+	});
+
+	describe('fail()', () => {
+		test('fail() returns new object', () => {
+			const item = {
+				name: 'foo',
+				enhancement: 15,
+				durability: 50,
+			};
+			const result = enhancer.fail(item);
+
+			expect(result).not.toBe(item);
+        });
+        
+        test('fail() decreases DUR by 5 when ENH < 15', () => {
+            const item = {
+                name: 'foo',
+                enhancement: 14, 
+                durability: 50
+            }
+            const result = enhancer.fail(item)
+
+            expect(result.durability).toBe(45)
+        })
+
+        test('fail() decreases DUR by 10 when ENH >= 15', () => {
             const item = {
                 name: 'foo',
                 enhancement: 15, 
                 durability: 50
             }
-            const result = enhancer.success(item)
+            const result = enhancer.fail(item)
 
-            expect(result).not.toBe(item)
+            expect(result.durability).toBe(40);
         })
 
-        test('success() returns obj with enh +1', () => {
+        test('fail() decreases ENH -1 when ENH > 16', () => {
             const item = {
                 name: 'foo',
-                enhancement: 15, 
+                enhancement: 17, 
                 durability: 50
             }
-            const result = enhancer.success(item)
+            const result = enhancer.fail(item)
 
-            expect(result.enhancement).toBe(16)
+            expect(result.enhancement).toBe(16);
         })
-
-        test('success() does not exceed 20', () => {
-            const item = {
-                name: 'foo',
-                enhancement: 20, 
-                durability: 50
-            }
-            const result = enhancer.success(item)
-
-            expect(result.enhancement).toBe(20)
-        })
-
-        test('success() only modifies enhancement stat', () => {
-            const item = {
-                name: 'foo',
-                enhancement: 15, 
-                durability: 50
-            }
-            const result = enhancer.success(item)
-
-            expect(result.name).toBe('foo')
-            expect(result.durability).toBe(50)
-        })
-    })
+	});
 });
